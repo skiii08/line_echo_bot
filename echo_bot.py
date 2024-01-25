@@ -2,6 +2,8 @@ import os
 import sys
 import json
 import requests  # Add this import
+import openai
+
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
