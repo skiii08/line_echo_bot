@@ -1,17 +1,18 @@
 import os
 import sys
 import json
-import requests  # Add this import
-import openai
+import requests
+from openai import AzureOpenAI
+
 
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage
 from linebot.models.flex_message import BubbleContainer, BoxComponent, TextComponent, ImageComponent
 from linebot.models import TextSendMessage
 
-from openai import AzureOpenAI
+#
 
 # LINE Messaging APIの設定
 channel_access_token = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
