@@ -196,13 +196,7 @@ def handle_text_message(event):
                 "title": response_json.get("title", ""),
                 "genre": response_json.get("genre", ""),
                 "release": response_json.get("Release", ""),  # Updated key
-                "director": response_json.get("director", ""),  # Updated key
-                "duration": response_json.get("duration", ""),
-                "distributor": response_json.get("distributor", ""),
-                "country": response_json.get("country", ""),
-                "lead": response_json.get("lead", ""),  # Updated key
-                "synopsis": response_json.get("synopsis", ""),
-            }
+              }
 
             # LINEに応答を返す
             send_movie_info(event, movie_data)
@@ -216,14 +210,16 @@ def handle_text_message(event):
         print(f"Error processing Azure response: {e}")
 
     except Exception as ex:
-        # Handle unexpected errors and send a default error message to the user
+        # 予期せぬエラーが発生した場合、デフォルトのエラーメッセージをユーザーに返す
         error_message = "エラーが発生しました。他の表現をお試しください。"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+        send_error_message(event, error_message)
         print(f"Unexpected error: {ex}")
 @handler.default()
 def default(event):
     error_message = "エラーが発生しました。他の表現をお試しください。"
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+def send_error_message(event, error_message):
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
 
 
 if __name__ == "__main__":
