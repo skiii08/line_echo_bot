@@ -192,7 +192,14 @@ def handle_text_message(event):
             movie_data = {
                 "title": response_json.get("title", ""),
                 "genre": response_json.get("genre", ""),
-                "release": response_json.get("Release", ""),  # Updated key
+                "release": response_json.get("Release", ""),
+                "director": response_json.get("director", ""),  # Updated key
+                "duration": response_json.get("duration", ""),
+                "distributor": response_json.get("distributor", ""),
+                "country": response_json.get("country", ""),
+                "lead": response_json.get("lead", ""),  # Updated key
+                "synopsis": response_json.get("synopsis", ""),
+                # Updated key
               }
 
             # LINEに応答を返す
