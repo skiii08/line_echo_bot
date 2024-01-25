@@ -38,6 +38,11 @@ client = AzureOpenAI(azure_endpoint=azure_openai_endpoint, api_key=azure_openai_
 
 app = Flask(__name__)
 
+def handle_error(e):
+    print(f"Unhandled error: {e}")
+    error_message = "エラーが発生しました。他の表現をお試しください。"
+    return error_message, 500
+
 def get_movie_poster_url(title):
     tmdb_api_key = os.environ.get("TMDB_API_KEY")  # Replace with your TMDb API key
     tmdb_url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={title}"
@@ -215,6 +220,10 @@ def handle_text_message(event):
         error_message = "エラーが発生しました。他の表現をお試しください。"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
         print(f"Unexpected error: {ex}")
+@handler.default()
+def default(event):
+    error_message = "エラーが発生しました。他の表現をお試しください。"
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
 
 
 if __name__ == "__main__":
