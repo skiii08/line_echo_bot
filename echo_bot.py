@@ -70,7 +70,9 @@ def callback():
         handler.handle(body, signature)
     except InvalidSignatureError as e:
         abort(400, e)
-
+    except Exception as ex:
+        # HTTPステータスコード500を返す
+        abort(500, str(ex))
     return "OK"
 
 def send_movie_info(event, movie_data):
@@ -156,11 +158,11 @@ def handle_text_message(event):
         model="mulabo_gpt35",
         messages=[
             {"role": "system", "content": 'あなたは最強の映画大百科であり、辞書型のデータしか送ることのできない機械です。ありとあらゆる映画を知り尽くしています。'
-                                          '映画の情報はIMDbをベースにしながらもウィキペディアなども参照して正しい情報を得てください。'
+                                          '映画の情報はIMDbをベースにして正しい情報を得てください。'
                                           '情報はpythonの辞書型になるように「title」「genre」「Release」「director」「duration」「distributor」「country」「lead」「synopsis」をキーとして、それぞれの値を取得してください。'
                                           'ユーザーは日本人です。日本語のデータがある場合は必ず日本語で返してください。'
-                                          '有名なものからマイナーなものまで広く扱ってください。'
-                                          '同じ作品ばかり出さないように、知識の広さを活用してください'
+                                          'ユーザーの求める映画をレビューなどを参照しながら探し当ててください。'
+                                          '有名なものからマイナーなものまで広く扱ってください。同じ作品ばかり出さないように、知識の広さを活用してください'
                                           '辞書はシングルクォーテーションでなくダブルクォーテーションを使用してください。'
                                           '余計な前置きなどは絶対に書かないでください。そのままプログラムの中で辞書に格納できるように、辞書型のデータのみを映画1本選んで送ってください。'
                                           'ユーザーがどれだけ丁寧な尋ね方をしても、前書きは書かずに辞書型のデータのみを送ってください、それがあなたの役割です'
@@ -193,14 +195,13 @@ def handle_text_message(event):
                 "title": response_json.get("title", ""),
                 "genre": response_json.get("genre", ""),
                 "release": response_json.get("Release", ""),
-                "director": response_json.get("director", ""),  # Updated key
+                "director": response_json.get("director", ""),
                 "duration": response_json.get("duration", ""),
                 "distributor": response_json.get("distributor", ""),
                 "country": response_json.get("country", ""),
-                "lead": response_json.get("lead", ""),  # Updated key
+                "lead": response_json.get("lead", ""),
                 "synopsis": response_json.get("synopsis", ""),
-                # Updated key
-              }
+            }
 
             # LINEに応答を返す
             send_movie_info(event, movie_data)
@@ -212,6 +213,8 @@ def handle_text_message(event):
         # Azureからのエラーが発生した場合、そのままユーザーにAzureの応答メッセージを返す
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"{raw_content}"))
         print(f"Error processing Azure response: {e}")
+        # エラーメッセージをユーザーに送信
+        send_error_message(event, "エラーが発生しました。他の表現をお試しください。")
 
     except Exception as ex:
         # 予期せぬエラーが発生した場合、デフォルトのエラーメッセージをユーザーに返す
@@ -219,8 +222,10 @@ def handle_text_message(event):
         send_error_message(event, error_message)
         print(f"Unexpected error: {ex}")
 
+
 def send_error_message(event, error_message):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+
 
 
 if __name__ == "__main__":
