@@ -73,6 +73,9 @@ def callback():
     except Exception as ex:
         # HTTPステータスコード500を返す
         abort(500, str(ex))
+        # ここで send_error_message を呼び出す
+        send_error_message(None, "エラーが発生しました。他の表現をお試しください。")
+
     return "OK"
 
 def send_movie_info(event, movie_data):
