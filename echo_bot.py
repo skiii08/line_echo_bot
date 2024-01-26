@@ -227,7 +227,7 @@ def handle_text_message(event):
 
 
 def send_error_message(event, error_message):
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
 
 
 
